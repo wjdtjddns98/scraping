@@ -10,9 +10,7 @@ html = req.text
 soup = BeautifulSoup(html, "html.parser")
 # print(req)
 
-lst50 = soup.select(".lst50") # 1위부터 50위까지의 정보
-lst100 = soup.select(".lst100") #50위부터 100위까지의 정보
-lst_all = lst50 + lst100
+lst_all = soup.select(".lst50, .lst100") # 1위부터 50위까지의 정보
 
 for i in lst_all:
     rank = i.select_one(".rank").text
