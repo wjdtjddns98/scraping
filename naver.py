@@ -14,9 +14,14 @@ results = soup.select(".view_wrap") #결과는 리스트와 동일한 테이터 
 for i in results:
     title = i.select_one(".title_link").text
     link = i.select_one(".title_link")["href"]
-    writer = i.select_one(".info_group .name").text
-    print(f"제목 : {title} : {link}")
-    print("="*100)
+    writer = i.select_one(".user_info").text
+    dsc = i.select_one(".dsc_link").text
+
+    print(f"[작성자] : {writer}")
+    print(f"[제목] : {title}")
+    print(f"{dsc}")
+    print(f"원문 보기 : {link}")
+    print("="*230)
 
 
 
