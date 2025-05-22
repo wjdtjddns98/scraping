@@ -8,7 +8,8 @@ import time
 from selenium.webdriver.common.by import By
 #키보드의 입력 형태를 코드로 작성하기 위해 사용하는 패키지
 from selenium.webdriver.common.keys import Keys
-
+import pymysql
+from selenium.webdriver.support.expected_conditions import none_of
 
 base_url = "https://kream.co.kr"
 
@@ -23,7 +24,7 @@ driver = webdriver.Chrome(options=option_)
 driver.get(base_url)
 
 driver.find_element(By.CSS_SELECTOR, ".btn_search.header-search-button.search-button-margin").click()
-driver.find_element(By.CSS_SELECTOR, ".input_search.show_placeholder_on_focus").send_keys(input("상품명 입력 해라 : ") + Keys.ENTER)
+driver.find_element(By.CSS_SELECTOR, ".input_search.show_placeholder_on_focus").send_keys(input("상품명 입력 : ") + Keys.ENTER)
 time.sleep(1)
 
 # 사용자 에게 입력 받고 싶어서 만들었는데 실용성 별로
@@ -50,6 +51,7 @@ soup = BeautifulSoup(html, "html.parser")
 items = soup.select(".product_card")
 keyword = input("검색할 키워드 를 입력해 주세요 : ")
 
+product_list = []
 for item in items:
     item_brand = item.select_one(".brand-name").text
     item_name = item.select_one(".name").text
@@ -58,16 +60,43 @@ for item in items:
     link = item.select_one(".item_inner")["href"]
     href_link = base_url + link
 
+    product = [item_brand, item_name, item_name2, item_price, href_link]
+    product_list.append(product)
 
-    if keyword in item_name2:
-        print(f"[{item_brand}]")
-        print(f"{item_name}")
-        print(f"{item_name2}")
-        print(f"[금액] : {item_price}")
-        print(f"[링크] : {href_link}")
-        print("="*100)
+    # if keyword in item_name2:
+    #     print(f"[{item_brand}]")
+    #     print(f"{item_name}")
+    #     print(f"{item_name2}")
+    #     print(f"[금액] : {item_price}")
+    #     print(f"[링크] : {href_link}")
+    #     print("="*100)
+
+driver.quit()
+
+connection = pymysql.connect(
+    host="127.0.0.1",
+    user="root",
+    password="1234",
+    db="kream",
+    charset="utf8"
+)
+
+def execute_query(connection, query, args=None):
+    with connection.cursor() as cursor:
+        cursor.execute(query, args or ())
+        if query.strip().upper().startswith('SELECT'):
+            return cursor.fetchall()
+        else:
+            connection.commit()
+            return None
 
 
+for product in product_list:
+    execute_query(
+        connection,
+        'INSERT INTO kream (item_brand, item_name, item_name2, item_price, href_link) VALUES (%s, %s, %s, %s, %s)',
+        (product[0], product[1], product[2], product[3], product[4])
+    )
 
 
 
