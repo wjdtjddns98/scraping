@@ -1,22 +1,19 @@
-from os.path import split
-
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import time
 #클래스, 아이디 css_selector를 이용해 원하는 값을 가져 오기 위한 패키지
 from selenium.webdriver.common.by import By
-#키보드의 입력 형태를 코드로 작성하기 위해 사용하는 패키지
+#키보드의 입력 형태를 코드로 작성 하기 위해 사용 하는 패키지
 from selenium.webdriver.common.keys import Keys
 import pymysql
-from selenium.webdriver.support.expected_conditions import none_of
 
 base_url = "https://kream.co.kr"
 
 header_user = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"}
 
 option_ = Options() #인스턴스 화
-option_.add_experimental_option("detach", True) #자동으로 브라우저가 종료되지 않게 설정
+option_.add_experimental_option("detach", True) #자동 으로 브라우저가 종료 되지 않게 설정
 #selenium 공식 깃허브 참조
 option_.add_argument(f"User-Agent={header_user}")
 
@@ -97,7 +94,3 @@ for product in product_list:
         'INSERT INTO kream (item_brand, item_name, item_name2, item_price, href_link) VALUES (%s, %s, %s, %s, %s)',
         (product[0], product[1], product[2], product[3], product[4])
     )
-
-
-
-
